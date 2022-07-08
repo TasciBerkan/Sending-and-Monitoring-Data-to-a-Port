@@ -39,16 +39,28 @@ context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind("tcp://*:5555")
 
-while True:
-    log_output = fake.module_output()
-    msg = {
-        'module': fake.module_name(),
-        'timestamp': datetime.now().isoformat(),
-        'state': fake.module_state(),
-        'log-stream': log_output[0],
-        'log-message': log_output[1],
-    }
-    _logger.debug(msg)
-    socket.send_json(msg)
 
-    sleep(random.uniform(0, 0.5))
+def out():
+    try:
+        while True:
+            log_output = fake.module_output()
+            msg = {
+                'module': fake.module_name(),
+                'timestamp': datetime.now().isoformat(),
+                'state': fake.module_state(),
+                'log-stream': log_output[0],
+                'log-message': log_output[1],
+            }
+            _logger.debug(msg)
+            socket.send_json(msg)
+
+            sleep(random.uniform(0, 0.5))
+
+        #Only letting the user be able to stop the program fully in any other case of error program will tell you it occurred but continue generating logs.
+    except KeyboardInterrupt:
+        print("YOU PRESSED CTRL+C PROGRAM IS INTERRUPTED")
+    except (RuntimeError, KeyError) as error:
+        print("AN ERROR HAS OCCURRED AND HANDLED PROGRAM WILL CONTINUE")
+        out()
+
+out()
