@@ -59,9 +59,12 @@ def out():
         #Only letting the user be able to stop the program fully in any other case of error program will tell you it occurred but continue generating logs.
     except KeyboardInterrupt:
         print("YOU PRESSED CTRL+C PROGRAM IS INTERRUPTED")
-    except (RuntimeError,socket.error) as error:
+    except (RuntimeError, socket.error) as error:
         print("AN ERROR HAS OCCURRED AND HANDLED PROGRAM WILL CONTINUE")
-        
         out()
+    except ValueError:
+        print("PRODUCED INVALID LOG")
+        
+
 
 out()
